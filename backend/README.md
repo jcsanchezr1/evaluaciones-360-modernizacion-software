@@ -79,7 +79,9 @@ Esto iniciará los siguientes servicios:
 Datos de salida (JSON):
 ```json
 {
-    "id": "017d6369-9454-48c5-8a9e-c817dd229faa",
+    "id": "d86c4de8-dd3a-457d-9aba-d20356f90473",
+    "id_consecutivo": 2,
+    "nombre": "evaluacion_6c87fe1a",
     "message": "Evaluacion creada correctamente"
 }
 ```
@@ -92,15 +94,17 @@ Respuesta exitosa (200):
 ```json
 [
     {
-        "id": "91b398bf-c92a-4ef5-8729-8939d397bbff",
-        "nombre": "evaluacion_dc2f4d04",
-        "fecha_insercion": "2025-07-18T20:36:35.568376",
+        "id": "6a376045-2d73-4446-9bd9-e1cacb2bc7d5",
+        "id_consecutivo": 1,
+        "nombre": "evaluacion_bdc2f23b",
+        "fecha_insercion": "2025-07-18T21:31:52.535934",
         "esta_eliminada": false
     },
     {
-        "id": "ab56f7b1-5d40-453a-bb87-547b09fe3417",
-        "nombre": "evaluacion_0c73f800",
-        "fecha_insercion": "2025-07-18T20:36:36.162911",
+        "id": "18421cb4-6d04-429a-89fe-c3d833acfff7",
+        "id_consecutivo": 2,
+        "nombre": "evaluacion_718eb353",
+        "fecha_insercion": "2025-07-18T21:31:53.127103",
         "esta_eliminada": false
     }
 ]
@@ -121,7 +125,9 @@ Respuesta exitosa (200):
 Respuesta exitosa (200):
 ```json
 {
-    "id": "adf97e88-d0ad-4b1c-82f9-06a5cd0c1662",
+    "id": "18421cb4-6d04-429a-89fe-c3d833acfff7",
+    "id_consecutivo": 2,
+    "nombre": "evaluacion_cdffbf57",
     "message": "Evaluacion actualizada correctamente"
 }
 ```

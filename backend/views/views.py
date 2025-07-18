@@ -1,7 +1,8 @@
 import uuid
 
-from flask import request, abort, make_response, Response
+from flask import request
 from flask_restful import Resource
+from sqlalchemy import func
 
 from models import db, Evaluaciones, EvaluacionesSchema
 
@@ -28,14 +29,19 @@ class EvaluacionesView(Resource):
         if existe_evaluacion(nombre):
             return {'message': 'la evaluacion con ese nombre ya existe'}, 412
         try:
+            max_consecutivo = db.session.query(func.max(Evaluaciones.id_consecutivo)).scalar()
+            nuevo_consecutivo = (max_consecutivo or 0) + 1
             nueva_evaluacion = Evaluaciones(
                 id=str(uuid.uuid4()),
+                id_consecutivo=nuevo_consecutivo,
                 nombre=nombre
             )
             db.session.add(nueva_evaluacion)
             db.session.commit()
             return {
                 "id": nueva_evaluacion.id,
+                "id_consecutivo": nueva_evaluacion.id_consecutivo,
+                "nombre": nueva_evaluacion.nombre,
                 "message": "Evaluacion creada correctamente"
             }, 201
         except Exception as e:
@@ -66,6 +72,8 @@ class EvaluacionDetailView(Resource):
             db.session.commit()
             return {
                 "id": id,
+                "id_consecutivo": evaluacion.id_consecutivo,
+                "nombre": evaluacion.nombre,
                 "message": "Evaluacion actualizada correctamente"
             }, 200
         except Exception as e:
