@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  evaluaciones_db:
+    image: postgres
+    container_name: evaluaciones_db
+    environment:
+      - POSTGRES_DB=evaluaciones_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - evaluaciones_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+  
+  evaluaciones:
+    image: evaluaciones
+    container_name: evaluaciones
+    build:
+      context: ./
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: evaluaciones_db
+      DB_PORT: 5432
+      DB_NAME: evaluaciones_db
+    dns:
+      - 8.8.8.8
+    networks:
+      - evaluaciones_net
+      - app_net
+    ports:
+      - "8080:8080"
+    depends_on:
+      evaluaciones_db:
+        condition: service_healthy
+
+networks:
+  app_net:
+    name: app_net
+    driver: bridge
+  evaluaciones_net:
+    name: evaluaciones_net
+    driver: bridge

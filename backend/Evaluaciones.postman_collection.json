@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "7048804d-dc80-4f2b-b91a-010326e78338",
+		"name": "Evaluaciones",
+		"description": "Esta colección está diseñada para probar y documentar los endpoints de la API destinada a la gestión de evaluaciones, permitiendo añadir, consultar, y administrar los datos relacionados. La colección en endpoints por funcionalidad:\n\n- **Añadir una evaluacion**\n    \n    - **Endpoint:** **`POST /evaluaciones`**\n        \n    - **Funcionalidad:** Añade una evaluacion en el sistema.\n        \n- **Consultar evaluaciones**\n    \n    - **Endpoint:** **`GET /evaluaciones`**\n        \n    - **Funcionalidad:** Permite obtener el listado de todas las evaluaciones en el sistema.\n        \n- **Editar una evaluacion**\n    \n    - **Endpoint:** **`PUT /evaluaciones/{id}`**\n        \n    - **Funcionalidad:** Permite actualizar una evaluacion a partir del id en el sistema.\n        \n- **Eliminar una evaluacion**\n    \n    - **Endpoint:** **`DELETE /evaluaciones/{id}`**\n        \n    - **Funcionalidad:** Permite eliminar una evaluacion a partir del id en el sistema.\n        \n- **Healthcheck**\n    \n    - **Endpoint:** **`GET /evaluaciones/ping`**\n        \n    - **Funcionalidad:** Verifica si el servicio está activo y responde correctamente.\n        \n- **Reset de la base de datos**\n    \n    - **Endpoint:** **`POST /evaluaciones/reset`**\n        \n    - **Funcionalidad:** Limpia completamente los datos registrados en el sistema",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2750860",
+		"_collection_link": "https://timecontrol.postman.co/workspace/e4bf613c-84ca-4624-ad9c-4c8c0259e211/collection/2750860-7048804d-dc80-4f2b-b91a-010326e78338?action=share&source=collection_link&creator=2750860"
+	},
+	"item": [
+		{
+			"name": "Añadir evaluacion ÉXITO",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const uuid = crypto.randomUUID().split('-')[0]\r",
+							"const nombre = `evaluacion_${uuid}`;\r",
+							"pm.variables.set('EVALUACION_NOMBRE', nombre);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"El estado deberia ser  201\", function () {\r",
+							"  pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response tiene id\", function () {\r",
+							"  pm.expect(jsonData.id).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response tiene message\", function () {\r",
+							"  pm.expect(jsonData.message).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set('EVALUACION_ID', jsonData.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"{{EVALUACION_NOMBRE}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/evaluaciones",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones"
+					]
+				},
+				"description": "Envía una solicitud válida para registrar una evaluación. El sistema responde con éxito confirmando el registro."
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener evaluaciones Éxito",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();",
+							"",
+							"pm.test(\"El estado deberia ser  200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/evaluaciones",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones"
+					]
+				},
+				"description": "Se consulta todas las evaluaciones creadas. La respuesta contiene el listado de las evaluaciones."
+			},
+			"response": []
+		},
+		{
+			"name": "Editar evaluacion ÉXITO",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const uuid = crypto.randomUUID().split('-')[0]\r",
+							"const nombre = `evaluacion_${uuid}`;\r",
+							"pm.variables.set('EVALUACION_NOMBRE', nombre);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"El estado deberia ser  200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response tiene id\", function () {\r",
+							"  pm.expect(jsonData.id).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response tiene message\", function () {\r",
+							"  pm.expect(jsonData.message).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set('EVALUACION_ID', jsonData.id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"{{EVALUACION_NOMBRE}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/evaluaciones/{{EVALUACION_ID}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones",
+						"{{EVALUACION_ID}}"
+					]
+				},
+				"description": "Envía una solicitud válida para actualizar una evaluacion. El sistema responde con éxito confirmando la actualiación."
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar evaluacion ÉXITO",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"El estado deberia ser  200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response tiene message\", function () {\r",
+							"  pm.expect(jsonData.message).to.not.be.undefined;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\":\"{{EVALUACION_NOMBRE}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/evaluaciones/{{EVALUACION_ID}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones",
+						"{{EVALUACION_ID}}"
+					]
+				},
+				"description": "Envía una solicitud válida para eliminar una evaluación. El sistema responde con éxito confirmando la eliminación de la evaluación."
+			},
+			"response": []
+		},
+		{
+			"name": "Verificar healtcheck",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"El estado deberia ser 200\"] = responseCode.code == 200;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/evaluaciones/ping",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones",
+						"ping"
+					]
+				},
+				"description": "Verifica que el servicio esté en funcionamiento. Responde con código 200 si todo está operativo."
+			},
+			"response": []
+		},
+		{
+			"name": "Limpiar la base de datos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"El estado deberia ser 200\"] = responseCode.code == 200;"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/evaluaciones/reset",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"evaluaciones",
+						"reset"
+					]
+				},
+				"description": "Limpia por completo los registros las evaluaciones. Retorna código 200 al completarse correctamente."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "EVALUACION_ID",
+			"value": "id",
+			"type": "string"
+		}
+	]
+}
