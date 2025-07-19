@@ -26,6 +26,9 @@ class EvaluacionesView(Resource):
             if field not in data:
                 return {'message': 'El campo nombre es obligatorio'}, 400
         nombre = data["nombre"]
+        instrucciones = data.get("instrucciones")
+        nombre_formulario = data.get("nombre_formulario")
+        
         if existe_evaluacion(nombre):
             return {'message': 'la evaluacion con ese nombre ya existe'}, 412
         try:
@@ -34,7 +37,9 @@ class EvaluacionesView(Resource):
             nueva_evaluacion = Evaluaciones(
                 id=str(uuid.uuid4()),
                 id_consecutivo=nuevo_consecutivo,
-                nombre=nombre
+                nombre=nombre,
+                instrucciones=instrucciones,
+                nombre_formulario=nombre_formulario
             )
             db.session.add(nueva_evaluacion)
             db.session.commit()
@@ -42,6 +47,8 @@ class EvaluacionesView(Resource):
                 "id": nueva_evaluacion.id,
                 "id_consecutivo": nueva_evaluacion.id_consecutivo,
                 "nombre": nueva_evaluacion.nombre,
+                "instrucciones": nueva_evaluacion.instrucciones,
+                "nombre_formulario": nueva_evaluacion.nombre_formulario,
                 "message": "Evaluacion creada correctamente"
             }, 201
         except Exception as e:
@@ -67,13 +74,21 @@ class EvaluacionDetailView(Resource):
         evaluacion = db.session.query(Evaluaciones).filter_by(id=id, esta_eliminada=False).first()
         if not evaluacion:
             return {'message': 'Evaluación no encontrada'}, 404
+
         evaluacion.nombre = data['nombre']
+        if 'instrucciones' in data:
+            evaluacion.instrucciones = data['instrucciones']
+        if 'nombre_formulario' in data:
+            evaluacion.nombre_formulario = data['nombre_formulario']
+            
         try:
             db.session.commit()
             return {
                 "id": id,
                 "id_consecutivo": evaluacion.id_consecutivo,
                 "nombre": evaluacion.nombre,
+                "instrucciones": evaluacion.instrucciones,
+                "nombre_formulario": evaluacion.nombre_formulario,
                 "message": "Evaluacion actualizada correctamente"
             }, 200
         except Exception as e:

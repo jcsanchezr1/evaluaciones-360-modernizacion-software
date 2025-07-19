@@ -291,3 +291,268 @@ Las pruebas están configuradas para:
 - `app`: Aplicación Flask configurada para testing
 - `client`: Cliente de testing Flask
 - `mock_evaluacion`: Objeto evaluación mock
+
+# API de Evaluaciones
+
+##  Descripción
+
+API REST para gestionar evaluaciones con campos completos de información incluyendo instrucciones y formularios asociados.
+
+##  Arquitectura
+
+- **Framework**: Flask + Flask-RESTful
+- **Base de Datos**: PostgreSQL con SQLAlchemy
+- **Serialización**: Marshmallow
+- **Testing**: pytest con 35+ pruebas unitarias
+- **Cobertura**: 99%+ de código
+
+## Modelo de Datos
+
+### Evaluaciones
+
+| Campo | Tipo | Descripción | Requerido |
+|-------|------|-------------|-----------|
+| `id` | String(50) | UUID único de la evaluación | ✅ |
+| `id_consecutivo` | Integer | Número consecutivo incremental | ✅ |
+| `nombre` | String(140) | Nombre de la evaluación | ✅ |
+| `instrucciones` | Text | Instrucciones detalladas para la evaluación | ❌ |
+| `nombre_formulario` | String(200) | Nombre del formulario asociado | ❌ |
+| `fecha_insercion` | DateTime | Timestamp de creación (UTC) | ✅ |
+| `esta_eliminada` | Boolean | Marcador de eliminación lógica | ✅ |
+
+## ndpoints
+
+### 1. Crear Evaluación
+```http
+POST /evaluaciones
+Content-Type: application/json
+
+{
+  "nombre": "Evaluación de Desempeño Q1",
+  "instrucciones": "Completar todas las secciones antes del viernes. Incluir ejemplos específicos.",
+  "nombre_formulario": "Formulario Desempeño 2024"
+}
+```
+
+**Respuesta Exitosa (201):**
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "id_consecutivo": 1,
+  "nombre": "Evaluación de Desempeño Q1",
+  "instrucciones": "Completar todas las secciones antes del viernes. Incluir ejemplos específicos.",
+  "nombre_formulario": "Formulario Desempeño 2024",
+  "message": "Evaluacion creada correctamente"
+}
+```
+
+**Errores:**
+- `400`: Campo nombre obligatorio
+- `412`: Evaluación con ese nombre ya existe
+
+### 2. Listar Evaluaciones
+```http
+GET /evaluaciones
+```
+
+**Respuesta Exitosa (200):**
+```json
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "id_consecutivo": 1,
+    "nombre": "Evaluación de Desempeño Q1",
+    "instrucciones": "Completar todas las secciones antes del viernes.",
+    "nombre_formulario": "Formulario Desempeño 2024",
+    "fecha_insercion": "2024-01-15T10:30:00.000Z",
+    "esta_eliminada": false
+  },
+  {
+    "id": "456e7890-e89b-12d3-a456-426614174001",
+    "id_consecutivo": 2,
+    "nombre": "Evaluación Técnica Backend",
+    "instrucciones": null,
+    "nombre_formulario": "Formulario Técnico",
+    "fecha_insercion": "2024-01-16T14:20:00.000Z",
+    "esta_eliminada": false
+  }
+]
+```
+
+### 3. Actualizar Evaluación
+```http
+PUT /evaluaciones/{id}
+Content-Type: application/json
+
+{
+  "nombre": "Evaluación de Desempeño Q1 - Actualizada",
+  "instrucciones": "Instrucciones actualizadas con nuevos criterios.",
+  "nombre_formulario": "Formulario Desempeño 2024 v2"
+}
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "id_consecutivo": 1,
+  "nombre": "Evaluación de Desempeño Q1 - Actualizada",
+  "instrucciones": "Instrucciones actualizadas con nuevos criterios.",
+  "nombre_formulario": "Formulario Desempeño 2024 v2",
+  "message": "Evaluacion actualizada correctamente"
+}
+```
+
+**Errores:**
+- `400`: ID o campo nombre obligatorio
+- `404`: Evaluación no encontrada
+
+**Notas:**
+- `nombre` es obligatorio
+- `instrucciones` y `nombre_formulario` son opcionales
+- Solo se actualizan los campos proporcionados
+
+### 4. Eliminar Evaluación (Soft Delete)
+```http
+DELETE /evaluaciones/{id}
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "message": "Evaluación eliminada correctamente"
+}
+```
+
+**Errores:**
+- `400`: ID obligatorio
+- `404`: Evaluación no encontrada
+
+### 5. Health Check
+```http
+GET /evaluaciones/ping
+```
+
+**Respuesta (200):**
+```json
+"pong"
+```
+
+### 6. Reset Base de Datos
+```http
+POST /evaluaciones/reset
+```
+
+**Respuesta (200):**
+```json
+{
+  "message": "Todos los datos fueron eliminados"
+}
+```
+
+## Testing
+
+### Ejecutar Pruebas
+```bash
+# Todas las pruebas
+python -m pytest tests/ -v
+
+# Con cobertura
+python -m pytest tests/ --cov=views --cov=models --cov-report=html
+
+# Pruebas específicas
+python -m pytest tests/test_evaluaciones_view.py -v
+```
+
+### Cobertura de Pruebas
+- **35+ pruebas unitarias**
+- **99%+ cobertura de código**
+- **Todos los endpoints cubiertos**
+- **Casos de error y edge cases**
+- **Nuevos campos completamente testados**
+
+### Casos de Prueba Incluidos
+
+#### Crear Evaluación (POST)
+- Creación exitosa con todos los campos
+- Creación con solo campos obligatorios
+- Creación con nuevos campos específicos
+- Error: nombre obligatorio
+- Error: nombre duplicado
+- Error: problemas de base de datos
+
+#### Actualizar Evaluación (PUT)
+- Actualización exitosa completa
+- Actualización parcial de campos nuevos
+- Compatibilidad hacia atrás
+- Error: campos obligatorios
+- Error: evaluación no encontrada
+
+## Configuración
+
+## Variables de Entorno
+```bash
+DB_USER=####
+DB_PASSWORD=####
+DB_HOST=####
+DB_PORT=####
+DB_NAME=####
+```
+
+### Ejecutar la Aplicación
+```bash
+# Desarrollo
+flask run
+
+# Producción
+gunicorn app:app
+```
+
+## Docker
+
+```bash
+# Ejecutar con Docker Compose
+docker-compose up
+
+# Solo base de datos
+docker-compose up postgres
+```
+
+## Ejemplos de Uso
+
+### Caso 1: Evaluación Completa
+```bash
+curl -X POST http://localhost:5000/evaluaciones \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Evaluación 360 - Liderazgo",
+    "instrucciones": "Esta evaluación mide competencias de liderazgo. Complete todas las secciones y proporcione ejemplos específicos de situaciones donde demostró cada competencia.",
+    "nombre_formulario": "Formulario 360 Liderazgo 2024"
+  }'
+```
+
+### Caso 2: Evaluación Mínima
+```bash
+curl -X POST http://localhost:5000/evaluaciones \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Evaluación Rápida"
+  }'
+```
+
+### Caso 3: Actualización Parcial
+```bash
+curl -X PUT http://localhost:5000/evaluaciones/123e4567-e89b-12d3-a456-426614174000 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Evaluación Rápida",
+    "instrucciones": "Nuevas instrucciones agregadas posteriormente"
+  }'
+```
+
+## Recursos Adicionales
+
+- **Postman Collection**: `Evaluaciones.postman_collection.json`
+- **Tests**: Directorio `tests/` con 35+ pruebas
+- **Coverage Report**: `htmlcov/index.html`
+- **Configuración**: `pytest.ini`, `requirements-test.txt`

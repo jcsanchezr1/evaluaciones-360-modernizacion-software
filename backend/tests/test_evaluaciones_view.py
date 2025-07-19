@@ -19,7 +19,11 @@ class TestEvaluacionesViewPost:
         mock_existe_evaluacion.return_value = False
         mock_db.session.query.return_value.scalar.return_value = 5
         
-        data = {"nombre": "Nueva Evaluación"}
+        data = {
+            "nombre": "Nueva Evaluación",
+            "instrucciones": "Instrucciones de prueba",
+            "nombre_formulario": "Formulario Test"
+        }
 
         response = client.post('/evaluaciones', 
                              data=json.dumps(data),
@@ -30,6 +34,8 @@ class TestEvaluacionesViewPost:
         assert response_data['id'] == "test-uuid-123"
         assert response_data['id_consecutivo'] == 6
         assert response_data['nombre'] == "Nueva Evaluación"
+        assert response_data['instrucciones'] == "Instrucciones de prueba"
+        assert response_data['nombre_formulario'] == "Formulario Test"
         assert response_data['message'] == "Evaluacion creada correctamente"
 
         mock_existe_evaluacion.assert_called_once_with("Nueva Evaluación")
@@ -57,6 +63,39 @@ class TestEvaluacionesViewPost:
         assert response.status_code == 201
         response_data = json.loads(response.data)
         assert response_data['id_consecutivo'] == 1
+        assert response_data['instrucciones'] is None
+        assert response_data['nombre_formulario'] is None
+
+    @patch('views.views.existe_evaluacion')
+    @patch('views.views.uuid.uuid4')
+    @patch('views.views.db')
+    def test_crear_evaluacion_solo_con_nuevos_campos(self, mock_db, mock_uuid, mock_existe_evaluacion, client):
+        """Debe crear evaluación exitosamente solo con instrucciones y nombre_formulario"""
+
+        mock_session = MagicMock()
+        mock_db.session = mock_session
+        mock_uuid.return_value = "test-uuid-new-fields"
+        mock_existe_evaluacion.return_value = False
+        mock_db.session.query.return_value.scalar.return_value = 2
+        
+        data = {
+            "nombre": "Evaluación Campos Nuevos",
+            "instrucciones": "Estas son instrucciones muy detalladas para la evaluación",
+            "nombre_formulario": "Formulario de Evaluación Completo"
+        }
+
+        response = client.post('/evaluaciones', 
+                             data=json.dumps(data),
+                             content_type='application/json')
+
+        assert response.status_code == 201
+        response_data = json.loads(response.data)
+        assert response_data['id'] == "test-uuid-new-fields"
+        assert response_data['id_consecutivo'] == 3
+        assert response_data['nombre'] == "Evaluación Campos Nuevos"
+        assert response_data['instrucciones'] == "Estas son instrucciones muy detalladas para la evaluación"
+        assert response_data['nombre_formulario'] == "Formulario de Evaluación Completo"
+        assert response_data['message'] == "Evaluacion creada correctamente"
 
     def test_crear_evaluacion_sin_nombre(self, client):
         """Debe retornar error 400 cuando no se proporciona el nombre"""
@@ -140,19 +179,33 @@ class TestEvaluacionesViewGet:
         mock_evaluacion1 = MagicMock()
         mock_evaluacion1.id = "uuid-1"
         mock_evaluacion1.nombre = "Evaluación 1"
+        mock_evaluacion1.instrucciones = "Instrucciones para evaluación 1"
+        mock_evaluacion1.nombre_formulario = "Formulario 1"
         mock_evaluacion1.esta_eliminada = False
         
         mock_evaluacion2 = MagicMock()
         mock_evaluacion2.id = "uuid-2"
         mock_evaluacion2.nombre = "Evaluación 2"
+        mock_evaluacion2.instrucciones = None
+        mock_evaluacion2.nombre_formulario = "Formulario 2"
         mock_evaluacion2.esta_eliminada = False
         
         evaluaciones_mock = [mock_evaluacion1, mock_evaluacion2]
         mock_db.session.query.return_value.filter_by.return_value.all.return_value = evaluaciones_mock
         
         expected_result = [
-            {"id": "uuid-1", "nombre": "Evaluación 1"},
-            {"id": "uuid-2", "nombre": "Evaluación 2"}
+            {
+                "id": "uuid-1", 
+                "nombre": "Evaluación 1",
+                "instrucciones": "Instrucciones para evaluación 1",
+                "nombre_formulario": "Formulario 1"
+            },
+            {
+                "id": "uuid-2", 
+                "nombre": "Evaluación 2",
+                "instrucciones": None,
+                "nombre_formulario": "Formulario 2"
+            }
         ]
         mock_schema.dump.return_value = expected_result
 
