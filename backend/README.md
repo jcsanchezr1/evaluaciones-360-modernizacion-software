@@ -164,3 +164,130 @@ Respuesta exitosa (200):
     "message": "Todos los datos fueron eliminados"
 }
 ```
+
+
+# Pruebas Unitarias
+
+## Descripción
+
+Suite  de pruebas unitarias para la API REST de Evaluaciones. las pruebas están diseñadas para mockear la capa de base de datos y enfocarse en la lógica de los controladores.
+
+##  Estructura de Pruebas
+
+```
+tests/
+├── __init__.py                     # Paquete de tests
+├── conftest.py                     # Configuración globales
+├── test_evaluaciones_view.py       # Pruebas para EvaluacionesView (POST/GET)
+├── test_evaluacion_detail_view.py  # Pruebas para EvaluacionDetailView (PUT/DELETE)
+├── test_health_check_view.py       # Pruebas para HealthCheckView
+├── test_reset_database_view.py     # Pruebas para ResetDatabaseView
+├── test_utils.py                   # Pruebas para funciones utilitarias
+
+```
+
+## 🚀 Configuración
+
+### Instalación de Dependencias
+
+```bash
+# Instalar dependencias de testing
+pip install -r requirements-test.txt
+```
+
+### Variables de Entorno
+
+Las pruebas establecen automáticamente `TESTING=True` para evitar conexiones a la base de datos real.
+
+## Ejecutar Pruebas
+
+### Todas las pruebas
+```bash
+pytest
+```
+
+### Con cobertura de código
+```bash
+pytest --cov=views --cov=models --cov-report=html
+```
+
+### Pruebas específicas
+```bash
+# Solo pruebas de EvaluacionesView
+pytest tests/test_evaluaciones_view.py
+
+# Solo pruebas de POST
+pytest tests/test_evaluaciones_view.py::TestEvaluacionesViewPost
+
+# Prueba específica
+pytest tests/test_evaluaciones_view.py::TestEvaluacionesViewPost::test_crear_evaluacion_exitosa
+```
+
+### Modo verbose
+```bash
+pytest -v
+```
+
+## 📊 Cobertura
+
+Las pruebas están configuradas para:
+- **90%+ cobertura mínima** requerida
+- **Reporte HTML** en `htmlcov/`
+- **Reporte terminal** con líneas faltantes
+
+## Casos de Prueba Cubiertos
+
+### EvaluacionesView (POST /evaluaciones)
+- Creación exitosa de evaluación
+- Primer consecutivo cuando no hay evaluaciones
+- Error 400: campo nombre obligatorio
+- Error 400: nombre vacío
+- Error 412: nombre duplicado
+- Error 500: problema de base de datos
+
+### EvaluacionesView (GET /evaluaciones)
+- Obtener lista de evaluaciones exitosa
+- Lista vacía cuando no hay evaluaciones
+- Error 500: problema de base de datos
+
+### EvaluacionDetailView (PUT /evaluaciones/{id})
+- Actualización exitosa
+- Error 400: ID obligatorio
+- Error 400: nombre obligatorio
+- Error 400: nombre vacío
+- Error 404: evaluación no encontrada
+- Error 404: evaluación eliminada
+- Error 500: problema de base de datos
+
+### EvaluacionDetailView (DELETE /evaluaciones/{id})
+- Eliminación exitosa (soft delete)
+- Error 404: ID obligatorio
+- Error 404: evaluación no encontrada
+- Error 404: evaluación ya eliminada
+- Error 500: problema de base de datos
+
+### HealthCheckView (GET /evaluaciones/ping)
+- Respuesta exitosa con "pong"
+- Error 405: métodos no permitidos
+
+### ResetDatabaseView (POST /evaluaciones/reset)
+- Reset exitoso de base de datos
+- Reset exitoso cuando no hay datos
+- Error 500: problema de base de datos
+- Error 405: métodos no permitidos
+
+### Funciones Utilitarias
+- `existe_evaluacion()` con diferentes casos
+
+## Mocking
+
+### Base de Datos
+- **SQLAlchemy mockeado** - No hay conexiones reales
+- **Sesiones de BD simuladas** - Todas las operaciones son mocks
+- **Transacciones simuladas** - Commits y rollbacks tracked
+
+### Fixtures Principales
+- `mock_db`: Mock automático de la base de datos
+- `app`: Aplicación Flask configurada para testing
+- `client`: Cliente de testing Flask
+- `mock_evaluacion`: Objeto evaluación mock
