@@ -550,6 +550,32 @@ curl -X PUT http://localhost:5000/evaluaciones/123e4567-e89b-12d3-a456-426614174
   }'
 ```
 
+## Despliegue en GCP
+
+1. Crear la Base de datos en al **Cloud SQL** en la cuenta de **GCP**.
+
+2. Genera la imagen Docker del microservicio utilizando el siguiente comando:
+```bash
+docker build -t us-central1-docker.pkg.dev/soluciones-cloud-2024-02/evaluaciones/evaluaciones-ms:1.0 .
+```
+
+3. Subir la imagen al **Artifactory Registry** creado en la cuenta de **GCP** con el siguiente comando:
+```bash
+docker push us-central1-docker.pkg.dev/soluciones-cloud-2024-02/evaluaciones/evaluaciones-ms:1.0
+```
+
+4. Crear el servicio en Cloud Run del microservicio de evaluaciones
+```bash
+gcloud run deploy evaluaciones-ms \
+    --image us-central1-docker.pkg.dev/soluciones-cloud-2024-02/evaluaciones/evaluaciones-ms:1.0 \
+    --region us-central1 \
+    --set-env-vars DB_USER="postgres",DB_PASSWORD="postgres",DB_HOST="IP-DB",DB_PORT="5432",DB_NAME="postgres"\
+    --memory 16Gi \
+    --cpu 4 \
+    --min-instances 1 \
+    --max-instances 1
+```
+
 ## Recursos Adicionales
 
 - **Postman Collection**: `Evaluaciones.postman_collection.json`
