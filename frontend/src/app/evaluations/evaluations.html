@@ -1,0 +1,29 @@
+<h2>Evaluaciones</h2>
+<p>Cree la evaluación asignándole un nombre</p>
+
+<div class="mb-3">
+  <button class="btn btn-primary btn-sm me-2">+ Nuevo</button>
+  <button class="btn btn-success btn-sm me-2">✔ Guardar</button>
+  <button class="btn btn-secondary btn-sm">✖ Descartar</button>
+</div>
+
+<table class="table table-bordered table-hover table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Nombre Evaluación</th>
+      <th>Detalles</th>
+      <th>Configuración</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let evaluation of evaluations">
+      <td>{{ evaluation.id }}</td>
+      <td>{{ evaluation.name }}</td>
+      <td><button class="btn btn-info btn-sm">Detalles Evaluación</button></td>
+      <td><button class="btn btn-info btn-sm">Configurar Evaluación</button></td>
+      <td><button class="btn btn-danger btn-sm">✖ Eliminar</button></td>
+    </tr>
+  </tbody>
+</table>
