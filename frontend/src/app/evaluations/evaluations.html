@@ -1,3 +1,7 @@
+<div class="mb-4">
+  <h4 class="mb-0">Evaluaciones</h4>
+</div>
+
 <div class="mb-3">
   <button class="btn btn-nuevo btn-sm me-2" (click)="addEvaluation()">
     <i class="bi bi-plus me-1"></i> Nuevo
@@ -5,15 +9,11 @@
   <button class="btn btn-guardar btn-sm me-2" (click)="saveEvaluations()">
     <i class="bi bi-check2 me-1"></i> Guardar
   </button>
-  <button class="btn btn-descartar btn-sm">
-    <i class="bi bi-x me-1"></i> Descartar
-  </button>
   <button
-    class="btn btn-secondary btn-sm"
+    class="btn btn-descartar btn-sm"
     (click)="descartarCambios()"
-    [disabled]="editingId === null"
-  >
-    ✖ Descartar
+    [disabled]="editingId === null">
+    <i class="bi bi-x me-1"></i> Descartar
   </button>
 </div>
 
@@ -21,7 +21,7 @@
   <thead class="table-light">
     <tr>
       <th>ID</th>
-      <th>Nombre Evaluación</th>
+      <th>Nombre evaluación</th>
       <th>Detalles</th>
       <th>Configuración</th>
       <th></th>
@@ -56,15 +56,10 @@
         <button class="btn btn-morado-outline btn-sm">
           <i class="bi bi-gear me-1"></i> Configurar evaluación
         </button>
-      </td>      
-      <td>
-        <button class="btn btn-eliminar btn-sm">
-          <i class="bi bi-trash me-1"></i> Eliminar
-        </button>
       </td>
       <td>
-        <button class="btn btn-danger btn-sm" (click)="eliminarEvaluacion(i)">
-          ✖ Eliminar
+        <button class="btn btn-eliminar btn-sm" (click)="eliminarEvaluacion(i)">
+          <i class="bi bi-trash me-1"></i> Eliminar
         </button>
       </td>
     </tr>

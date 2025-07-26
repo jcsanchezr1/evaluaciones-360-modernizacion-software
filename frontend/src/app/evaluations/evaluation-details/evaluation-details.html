@@ -1,12 +1,20 @@
-<h4 class="mb-4">Detalles de la Evaluación</h4>
+<div class="d-flex align-items-center mb-4">
+  <button class="btn btn-volver me-3" (click)="volver()">
+    <i class="bi bi-arrow-left"></i>
+  </button>
+  <h4 class="mb-0">Detalles de la evaluación</h4>
+</div>
+
 
 <div class="mb-3">
-  <button class="btn btn-primary btn-sm me-2">+ Nuevo</button>
-  <button class="btn btn-success btn-sm me-2" (click)="guardar()">
-    ✓ Guardar
+  <button class="btn btn-nuevo btn-sm me-2">
+    <i class="bi bi-plus me-1"></i> Nuevo
   </button>
-  <button class="btn btn-secondary btn-sm" (click)="descartar()">
-    ✖ Descartar
+  <button class="btn btn-guardar btn-sm me-2" (click)="guardar()">
+    <i class="bi bi-check2 me-1"></i> Guardar
+  </button>
+  <button class="btn btn-descartar btn-sm" (click)="descartar()">
+    <i class="bi bi-x me-1"></i> Descartar
   </button>
 </div>
 
@@ -14,7 +22,7 @@
   <thead class="table-light">
     <tr>
       <th>ID</th>
-      <th>Tipo Detalle</th>
+      <th>Tipo detalle</th>
       <th>Valor</th>
       <th></th>
     </tr>
@@ -37,9 +45,10 @@
         />
       </td>
       <td>
-        <button class="btn btn-danger btn-sm" (click)="eliminar()">
-          ✖ Eliminar
+        <button class="btn btn-eliminar btn-sm">
+          <i class="bi bi-trash me-1"></i> Eliminar
         </button>
+      </td>
     </tr>
   </tbody>
 </table>

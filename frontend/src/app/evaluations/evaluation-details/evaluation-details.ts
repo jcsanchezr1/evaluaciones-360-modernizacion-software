@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Evaluacion } from '../../models/evaluacion.model';
 import { EvaluacionService } from '../../services/evaluacion';
 
@@ -14,7 +14,8 @@ export class EvaluationDetails {
 
   constructor(
     private route: ActivatedRoute,
-    private evaluacionService: EvaluacionService
+    private evaluacionService: EvaluacionService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +39,10 @@ export class EvaluationDetails {
 
   updateValor(nuevoValor: string) {
     this.evaluacion.instrucciones = nuevoValor;
+  }
+
+  volver(): void {
+    this.router.navigate(['/evaluations']);
   }
 
   guardar() {
