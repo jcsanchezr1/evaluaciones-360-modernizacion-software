@@ -9,6 +9,7 @@ import { Evaluations } from './evaluations/evaluations';
 import { provideHttpClient } from '@angular/common/http';
 import { EvaluationDetails } from './evaluations/evaluation-details/evaluation-details';
 import { FormsModule } from '@angular/forms';
+import { EvaluationConfiguration } from './evaluations/evaluation-configuration/evaluation-configuration';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { FormsModule } from '@angular/forms';
     Sidebar,
     Header,
     Evaluations,
-    EvaluationDetails
+    EvaluationDetails,
+    EvaluationConfiguration
   ],
   imports: [
     BrowserModule,

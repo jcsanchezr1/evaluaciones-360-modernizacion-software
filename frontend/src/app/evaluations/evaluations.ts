@@ -97,11 +97,8 @@ export class Evaluations implements OnInit {
 
     const payload = {
       nombre: evaluacion.nombre,
-      instrucciones:
-        evaluacion.instrucciones ?? `Instrucciones para ${evaluacion.nombre}`,
-      nombre_formulario:
-        evaluacion.nombre_formulario ??
-        `Formulario_${evaluacion.nombre.replace(/\s+/g, '_')}_2025`,
+      instrucciones: evaluacion.instrucciones,
+      nombre_formulario: evaluacion.nombre_formulario,
     };
 
     const request$ = evaluacion.esNueva
@@ -174,8 +171,13 @@ export class Evaluations implements OnInit {
       },
     });
   }
+  
   verDetallesEvaluacion(id: string) {
     this.router.navigate(['/evaluations', id, 'detalles']);
+  }
+
+  configurarEvaluacion(id: string): void {
+    this.router.navigate(['/evaluations', id, 'configuracion']);
   }
 }
 interface EvaluacionUI extends Evaluacion {

@@ -2,9 +2,8 @@
   <button class="btn btn-volver me-3" (click)="volver()">
     <i class="bi bi-arrow-left"></i>
   </button>
-  <h4 class="mb-0">Detalles de la evaluación</h4>
+  <h4 class="mb-0">Configuración de la evaluación</h4>
 </div>
-
 
 <div class="mb-3">
   <button class="btn btn-nuevo btn-sm me-2">
@@ -22,8 +21,7 @@
   <thead class="table-light">
     <tr>
       <th>ID</th>
-      <th>Tipo detalle</th>
-      <th>Valor</th>
+      <th>Formulario</th>
       <th></th>
     </tr>
   </thead>
@@ -31,21 +29,14 @@
     <tr *ngIf="evaluacion">
       <td>{{ evaluacion.id_consecutivo }}</td>
       <td>
-        <select          
-          class="form-select form-select-sm"
-        >
-          <option value="Instrucciones">Instrucciones</option>
+        <select class="form-select" [(ngModel)]="evaluacion.nombre_formulario">
+          <option value="">Seleccione una opción</option>
+          <option value="COMPETENCIAS CORPORATIVAS">COMPETENCIAS CORPORATIVAS</option>
+          <option value="COMPETENCIAS GENÉRICAS">COMPETENCIAS GENÉRICAS</option>
         </select>
       </td>
       <td>
-        <input
-          [(ngModel)]="evaluacion.instrucciones"
-          class="form-control form-control-sm"
-          type="text"
-        />
-      </td>
-      <td>
-        <button class="btn btn-eliminar btn-sm" (click)="eliminar()">
+        <button class="btn btn-eliminar btn-sm" (click)="eliminarFormulario()">
           <i class="bi bi-trash me-1"></i> Eliminar
         </button>
       </td>
