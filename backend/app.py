@@ -8,6 +8,7 @@ if current_dir not in sys.path:
 
 from flask import Flask
 from flask_restful import Api
+from flask_cors import CORS
 from config import Config
 from models import db
 from views import EvaluacionesView, EvaluacionDetailView, HealthCheckView, ResetDatabaseView
@@ -21,6 +22,7 @@ if not os.getenv('TESTING'):
     with app.app_context():
         db.create_all()
 
+cors = CORS(app)
 api = Api(app)
 api.add_resource(EvaluacionesView, '/evaluaciones')
 api.add_resource(EvaluacionDetailView, '/evaluaciones/<string:id>')
