@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router  } from '@angular/router';
 import { Evaluacion } from '../../models/evaluacion.model';
 
 @Component({
@@ -13,6 +13,8 @@ export class EvaluationDetails {
 
   editing = false;
 
+  constructor(private router: Router) {}
+
   get detalles() {
     return [
       {
@@ -25,6 +27,10 @@ export class EvaluationDetails {
 
   updateValor(nuevoValor: string) {
     this.evaluacion.instrucciones = nuevoValor;
+  }
+
+  volver(): void {
+    this.router.navigate(['/evaluations']);
   }
 
   guardar() {
