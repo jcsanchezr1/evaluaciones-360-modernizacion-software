@@ -1,0 +1,46 @@
+<h4 class="mb-4">Detalles de la Evaluación</h4>
+
+<div class="mb-3">
+  <button class="btn btn-primary btn-sm me-2">
+    + Nuevo
+  </button>
+  <button class="btn btn-success btn-sm me-2" (click)="guardar()">
+    ✓ Guardar
+  </button>
+  <button class="btn btn-secondary btn-sm" (click)="descartar()">
+    ✖ Descartar
+  </button>
+</div>
+
+<table class="table table-bordered table-hover table-striped">
+  <thead class="table-light">
+    <tr>
+      <th>ID</th>
+      <th>Tipo Detalle</th>
+      <th>Valor</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let detalle of detalles">
+      <td>{{ detalle.id }}</td>
+      <td>
+        <select class="form-select form-select-sm" disabled>
+          <option value="Instrucciones" selected>Instrucciones</option>
+        </select>
+      </td>
+      <td>
+        <input
+          class="form-control form-control-sm"
+          type="text"
+          [(ngModel)]="detalle.valor"
+          (ngModelChange)="updateValor($event)"
+          placeholder="Ingrese valor"
+        />
+      </td>
+      <td>
+        <button class="btn btn-danger btn-sm">✕ Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

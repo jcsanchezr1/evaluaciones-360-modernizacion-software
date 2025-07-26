@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { EvaluacionService } from '../services/evaluacion';
 import { Evaluacion } from '../models/evaluacion.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-evaluations',
@@ -8,30 +9,33 @@ import { Evaluacion } from '../models/evaluacion.model';
   templateUrl: './evaluations.html',
   styleUrl: './evaluations.scss',
 })
-export class Evaluations {
-  evaluations: Partial<Evaluacion & { id: number }>[] = [
-    {
-      nombre: 'EVALUACIÓN DE DESEMPEÑO',
-      instrucciones: 'Instrucciones para EVALUACIÓN DE DESEMPEÑO',
-      nombre_formulario: 'Formulario_1',
-      fecha_insercion: new Date().toISOString(),
-      esta_eliminada: false,
-    },
-    {
-      nombre: 'Evaluación Design Thinking',
-      instrucciones: 'Instrucciones para Evaluación Design Thinking',
-      nombre_formulario: 'Formulario_2',
-      fecha_insercion: new Date().toISOString(),
-      esta_eliminada: false,
-    },
-  ];
-
+export class Evaluations implements OnInit{
+  evaluations: Partial<Evaluacion>[] = [];
+  originalEvaluation: any = null;
   editingId: number | null = null;
 
-  constructor(private evaluacionService: EvaluacionService) {}
+  constructor(private evaluacionService: EvaluacionService,
+              private router: Router
+  ) {}
+  ngOnInit(): void {
+    this.getEvaluaciones();
+  }
+
+  getEvaluaciones(): void {
+    this.evaluacionService.obtenerEvaluaciones().subscribe({
+      next: (data) => {
+        this.evaluations = data.filter((e) => !e.esta_eliminada);
+      },
+      error: (err) => {
+        console.error('Error cargando evaluaciones:', err);
+        alert('Hubo un error al obtener las evaluaciones.');
+      },
+    });
+  }
 
   setEditing(index: number): void {
     this.editingId = index;
+    this.originalEvaluation = { ...this.evaluations[index] };
   }
 
   updateName(index: number, event: Event): void {
@@ -89,8 +93,8 @@ export class Evaluations {
 
     const payload = {
       nombre: evalToSave.nombre.trim(),
-      instrucciones: "la siguiente evaluación es para evaluar el desempeño del personal, selecione las opciones que mejor describan el desempeño del evaluado.",
-      nombre_formulario: "Asperctos academicos",
+      instrucciones: '',
+      nombre_formulario: '',
     };
 
     this.evaluacionService.crearEvaluacion(payload).subscribe({
@@ -98,6 +102,7 @@ export class Evaluations {
         console.log('Evaluación creada:', response);
         alert('Evaluación guardada exitosamente.');
         this.editingId = null; // salimos del modo edición
+        this.getEvaluaciones();
       },
       error: (err) => {
         console.error('Error al guardar:', err.message);
@@ -105,4 +110,53 @@ export class Evaluations {
       },
     });
   }
+
+  descartarCambios(): void {
+    if (this.editingId === null) return;
+
+    const evalActual = this.evaluations[this.editingId];
+
+    const isNueva = !evalActual.id; // si no tiene ID del backend, es nueva
+
+    if (isNueva) {
+      this.evaluations.splice(this.editingId, 1); // eliminarla
+    } else if (this.originalEvaluation) {
+      this.evaluations[this.editingId] = { ...this.originalEvaluation }; // restaurar valores
+    }
+
+    this.editingId = null;
+    this.originalEvaluation = null;
+  }
+
+  eliminarEvaluacion(index: number): void {
+    const evaluacion = this.evaluations[index];
+
+    const confirmacion = confirm('¿Estás seguro de eliminar esta evaluación?');
+    if (!confirmacion) return;
+
+    // Evaluación aún no guardada (sin ID del backend)
+    if (!evaluacion.id) {
+      this.evaluations.splice(index, 1);
+      if (this.editingId === index) {
+        this.editingId = null;
+        this.originalEvaluation = null;
+      }
+      return;
+    }
+
+    // Evaluación ya existente
+    this.evaluacionService.eliminarEvaluacion(evaluacion.id).subscribe({
+      next: () => {
+        this.evaluations.splice(index, 1);
+        alert('Evaluación eliminada exitosamente.');
+      },
+      error: (err) => {
+        console.error('Error eliminando evaluación:', err);
+        alert('Error al eliminar la evaluación.');
+      },
+    });
+  }
+  verDetallesEvaluacion(id: string) {
+  this.router.navigate(['/evaluations', id, 'detalles']);
+}
 }

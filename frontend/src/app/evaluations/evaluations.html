@@ -8,7 +8,13 @@
   <button class="btn btn-success btn-sm me-2" (click)="saveEvaluations()">
     ✔ Guardar
   </button>
-  <button class="btn btn-secondary btn-sm">✖ Descartar</button>
+  <button
+    class="btn btn-secondary btn-sm"
+    (click)="descartarCambios()"
+    [disabled]="editingId === null"
+  >
+    ✖ Descartar
+  </button>
 </div>
 
 <table class="table table-bordered table-hover table-striped">
@@ -23,13 +29,13 @@
   </thead>
   <tbody>
     <tr *ngFor="let evaluation of evaluations; let i = index">
-      <td>{{ evaluation.id }}</td>
+      <td>{{ evaluation.id_consecutivo }}</td>
       <td (click)="setEditing(i)">
         <ng-container *ngIf="editingId === i; else viewMode">
           <input
             type="text"
             class="form-control"
-            [value]="evaluation.nombre"            
+            [value]="evaluation.nombre"
             (input)="updateName(i, $event)"
             autofocus
           />
@@ -38,11 +44,22 @@
           {{ evaluation.nombre }}
         </ng-template>
       </td>
-      <td><button class="btn btn-info btn-sm">Detalles Evaluación</button></td>
+      <td>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="verDetallesEvaluacion(evaluation.id!)"
+        >
+          Detalles Evaluación
+        </button>
+      </td>
       <td>
         <button class="btn btn-info btn-sm">Configurar Evaluación</button>
       </td>
-      <td><button class="btn btn-danger btn-sm">✖ Eliminar</button></td>
+      <td>
+        <button class="btn btn-danger btn-sm" (click)="eliminarEvaluacion(i)">
+          ✖ Eliminar
+        </button>
+      </td>
     </tr>
   </tbody>
 </table>
