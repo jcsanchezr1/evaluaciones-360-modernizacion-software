@@ -1,3 +1,25 @@
-button {
-  font-size: 0.8rem;
+.header {
+  background-color: #343A40;
+  color: #868E96;
+
+  i {
+    color: #868E96;
+    transition: color 0.2s ease;
+  }
+
+  .user-info,
+  .logout-action {
+    font-weight: 500;
+    color: #868E96;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: white;
+
+      i {
+        color: white;
+      }
+    }
+  }
 }

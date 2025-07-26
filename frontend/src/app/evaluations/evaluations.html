@@ -1,14 +1,13 @@
-<h2>Evaluaciones</h2>
-<p>Cree la evaluación asignándole un nombre</p>
-
 <div class="mb-3">
-  <button class="btn btn-primary btn-sm me-2" (click)="addEvaluation()">
-    + Nuevo
+  <button class="btn btn-nuevo btn-sm me-2" (click)="addEvaluation()">
+    <i class="bi bi-plus me-1"></i> Nuevo
   </button>
-  <button class="btn btn-success btn-sm me-2" (click)="saveEvaluations()">
-    ✔ Guardar
+  <button class="btn btn-guardar btn-sm me-2" (click)="saveEvaluations()">
+    <i class="bi bi-check2 me-1"></i> Guardar
   </button>
-  <button class="btn btn-secondary btn-sm">✖ Descartar</button>
+  <button class="btn btn-descartar btn-sm">
+    <i class="bi bi-x me-1"></i> Descartar
+  </button>
 </div>
 
 <table class="table table-bordered table-hover table-striped">
@@ -38,11 +37,21 @@
           {{ evaluation.nombre }}
         </ng-template>
       </td>
-      <td><button class="btn btn-info btn-sm">Detalles Evaluación</button></td>
       <td>
-        <button class="btn btn-info btn-sm">Configurar Evaluación</button>
+        <button class="btn btn-morado-outline btn-sm">
+          <i class="bi bi-eye me-1"></i> Detalles evaluación
+        </button>
       </td>
-      <td><button class="btn btn-danger btn-sm">✖ Eliminar</button></td>
+      <td>
+        <button class="btn btn-morado-outline btn-sm">
+          <i class="bi bi-gear me-1"></i> Configurar evaluación
+        </button>
+      </td>      
+      <td>
+        <button class="btn btn-eliminar btn-sm">
+          <i class="bi bi-trash me-1"></i> Eliminar
+        </button>
+      </td>
     </tr>
   </tbody>
 </table>
