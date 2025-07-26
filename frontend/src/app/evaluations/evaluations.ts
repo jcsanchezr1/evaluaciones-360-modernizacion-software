@@ -9,13 +9,15 @@ import { Router } from '@angular/router';
   templateUrl: './evaluations.html',
   styleUrl: './evaluations.scss',
 })
-export class Evaluations implements OnInit{
-  evaluations: Partial<Evaluacion>[] = [];
+export class Evaluations implements OnInit {
+  evaluations: EvaluacionUI[] = [];
   originalEvaluation: any = null;
   editingId: number | null = null;
+  selectedEvaluacion: Evaluacion | null = null;
 
-  constructor(private evaluacionService: EvaluacionService,
-              private router: Router
+  constructor(
+    private evaluacionService: EvaluacionService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.getEvaluaciones();
@@ -62,51 +64,67 @@ export class Evaluations implements OnInit{
   }
 
   addEvaluation(): void {
-    const hasEmpty = this.evaluations.some((e) => e.nombre?.trim() === '');
+    const hasEmpty = this.evaluations.some((e) => e.nombre.trim() === '');
 
     if (hasEmpty || this.editingId !== null) {
-      alert('Debes completar la evaluación actual antes de agregar una nueva.');
+      alert('El nombre de la evaluación no puede estar vacío.');
       return;
     }
 
-    const newEvaluation = {
+    const newEvaluation: EvaluacionUI = {
+      id: '', // se sobrescribirá después del POST
+      id_consecutivo: 0,
       nombre: '',
       instrucciones: '',
       nombre_formulario: '',
+      fecha_insercion: '',
+      esta_eliminada: false,
+      esNueva: true,
     };
 
     this.evaluations.push(newEvaluation);
-    this.editingId = this.evaluations.length - 1; // usa el índice como identificador temporal
+    this.editingId = this.evaluations.length - 1;
   }
 
   saveEvaluations(): void {
-    if (this.editingId === null) {
-      alert('No hay ninguna evaluación en edición.');
-      return;
-    }
+    if (this.editingId === null) return;
 
-    const evalToSave = this.evaluations[this.editingId];
-    if (!evalToSave || !evalToSave.nombre || evalToSave.nombre.trim() === '') {
-      alert('El nombre de la evaluación es obligatorio.');
+    const evaluacion = this.evaluations[this.editingId];
+    if (!evaluacion || evaluacion.nombre.trim() === '') {
+      alert('El nombre no puede estar vacío.');
       return;
     }
 
     const payload = {
-      nombre: evalToSave.nombre.trim(),
-      instrucciones: '',
-      nombre_formulario: '',
+      nombre: evaluacion.nombre,
+      instrucciones:
+        evaluacion.instrucciones ?? `Instrucciones para ${evaluacion.nombre}`,
+      nombre_formulario:
+        evaluacion.nombre_formulario ??
+        `Formulario_${evaluacion.nombre.replace(/\s+/g, '_')}_2025`,
     };
 
-    this.evaluacionService.crearEvaluacion(payload).subscribe({
+    const request$ = evaluacion.esNueva
+      ? this.evaluacionService.crearEvaluacion(payload)
+      : this.evaluacionService.actualizarEvaluacion(evaluacion.id, payload);
+
+    request$.subscribe({
       next: (response) => {
-        console.log('Evaluación creada:', response);
-        alert('Evaluación guardada exitosamente.');
-        this.editingId = null; // salimos del modo edición
-        this.getEvaluaciones();
+        if (evaluacion.esNueva) {
+          // Actualizar los campos desde la respuesta
+          evaluacion.id = response.id;
+          evaluacion.id_consecutivo = response.id_consecutivo;
+          evaluacion.fecha_insercion = response.fecha_insercion;
+          evaluacion.esta_eliminada = response.esta_eliminada;
+          evaluacion.esNueva = false;
+        }
+
+        alert('Evaluación guardada correctamente.');
+        this.editingId = null;
       },
       error: (err) => {
-        console.error('Error al guardar:', err.message);
-        alert('Hubo un error al guardar la evaluación.');
+        console.error('Error al guardar:', err);
+        alert('Error al guardar evaluación.');
       },
     });
   }
@@ -157,6 +175,9 @@ export class Evaluations implements OnInit{
     });
   }
   verDetallesEvaluacion(id: string) {
-  this.router.navigate(['/evaluations', id, 'detalles']);
+    this.router.navigate(['/evaluations', id, 'detalles']);
+  }
 }
+interface EvaluacionUI extends Evaluacion {
+  esNueva?: boolean; // propiedad auxiliar para saber si es nueva
 }

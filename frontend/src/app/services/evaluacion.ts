@@ -10,7 +10,7 @@ export interface CrearEvaluacionPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EvaluacionService {
   private baseUrl = 'http://localhost:8080/evaluaciones';
@@ -26,6 +26,17 @@ export class EvaluacionService {
   }
 
   eliminarEvaluacion(id: string) {
-  return this.http.delete(`${this.baseUrl}/${id}`);
-}
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  actualizarEvaluacion(
+    id: string,
+    evaluacion: {
+      nombre: string;
+      instrucciones: string;
+      nombre_formulario: string;
+    }
+  ): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, evaluacion);
+  }
 }

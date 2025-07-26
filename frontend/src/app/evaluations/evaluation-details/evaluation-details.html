@@ -1,9 +1,7 @@
 <h4 class="mb-4">Detalles de la Evaluación</h4>
 
 <div class="mb-3">
-  <button class="btn btn-primary btn-sm me-2">
-    + Nuevo
-  </button>
+  <button class="btn btn-primary btn-sm me-2">+ Nuevo</button>
   <button class="btn btn-success btn-sm me-2" (click)="guardar()">
     ✓ Guardar
   </button>
@@ -22,25 +20,26 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let detalle of detalles">
-      <td>{{ detalle.id }}</td>
+    <tr *ngIf="evaluacion">
+      <td>{{ evaluacion.id_consecutivo }}</td>
       <td>
-        <select class="form-select form-select-sm" disabled>
-          <option value="Instrucciones" selected>Instrucciones</option>
+        <select          
+          class="form-select form-select-sm"
+        >
+          <option value="Instrucciones">Instrucciones</option>
         </select>
       </td>
       <td>
         <input
+          [(ngModel)]="evaluacion.instrucciones"
           class="form-control form-control-sm"
           type="text"
-          [(ngModel)]="detalle.valor"
-          (ngModelChange)="updateValor($event)"
-          placeholder="Ingrese valor"
         />
       </td>
       <td>
-        <button class="btn btn-danger btn-sm">✕ Eliminar</button>
-      </td>
+        <button class="btn btn-danger btn-sm" (click)="eliminar()">
+          ✖ Eliminar
+        </button>
     </tr>
   </tbody>
 </table>
