@@ -2,8 +2,12 @@
 <p>Cree la evaluación asignándole un nombre</p>
 
 <div class="mb-3">
-  <button class="btn btn-primary btn-sm me-2">+ Nuevo</button>
-  <button class="btn btn-success btn-sm me-2">✔ Guardar</button>
+  <button class="btn btn-primary btn-sm me-2" (click)="addEvaluation()">
+    + Nuevo
+  </button>
+  <button class="btn btn-success btn-sm me-2" (click)="saveEvaluations()">
+    ✔ Guardar
+  </button>
   <button class="btn btn-secondary btn-sm">✖ Descartar</button>
 </div>
 
@@ -18,11 +22,26 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let evaluation of evaluations">
+    <tr *ngFor="let evaluation of evaluations; let i = index">
       <td>{{ evaluation.id }}</td>
-      <td>{{ evaluation.name }}</td>
+      <td (click)="setEditing(i)">
+        <ng-container *ngIf="editingId === i; else viewMode">
+          <input
+            type="text"
+            class="form-control"
+            [value]="evaluation.nombre"            
+            (input)="updateName(i, $event)"
+            autofocus
+          />
+        </ng-container>
+        <ng-template #viewMode>
+          {{ evaluation.nombre }}
+        </ng-template>
+      </td>
       <td><button class="btn btn-info btn-sm">Detalles Evaluación</button></td>
-      <td><button class="btn btn-info btn-sm">Configurar Evaluación</button></td>
+      <td>
+        <button class="btn btn-info btn-sm">Configurar Evaluación</button>
+      </td>
       <td><button class="btn btn-danger btn-sm">✖ Eliminar</button></td>
     </tr>
   </tbody>

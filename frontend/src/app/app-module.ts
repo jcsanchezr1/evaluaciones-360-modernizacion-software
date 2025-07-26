@@ -6,6 +6,7 @@ import { App } from './app';
 import { Sidebar } from './layout/sidebar/sidebar';
 import { Header } from './layout/header/header';
 import { Evaluations } from './evaluations/evaluations';
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { Evaluations } from './evaluations/evaluations';
     AppRoutingModule
   ],
   providers: [
+    provideHttpClient(),
     provideBrowserGlobalErrorListeners()
   ],
   bootstrap: [App]
